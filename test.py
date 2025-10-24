@@ -1,5 +1,6 @@
 import import_file
 import sys
+import re
 
 # Global variables
 drama_file_path = ""
@@ -30,7 +31,7 @@ def main():
             option_1()
 
         elif choice == "2":
-            print("Printing a summary report...")
+            option_2()
         elif choice == "3":
             print("Outputting the summary report to a text file...")
         elif choice == "4":
@@ -58,6 +59,46 @@ def option_1():
         print("Successfully imported drama from text file: " + drama_file_path.as_posix())
     else:
         print("File was empty or could not be read: " + drama_file_path.as_posix())
+
+
+def option_2():
+    global drama_file_path, drama_info
+
+    if not drama_info:
+        print("No drama has been imported yet. Please import a file first.")
+        return
+
+    text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
+    num_acts = scene_act_counter(text, "act")
+    print("Number of acts: " + str(num_acts))
+
+    num_scenes = scene_act_counter(text, "scene")
+    print("Number of scenes: " + str(num_scenes))
+
+
+
+def scene_act_counter(text, word):
+    lines = text if isinstance(text, list) else text.splitlines()
+
+    collecting = False
+    count = 0
+
+    for line in lines:
+        lower_line = line.lower().strip()
+
+        if not collecting and "contents" in lower_line:
+            collecting = True
+            continue
+
+        if collecting and ("dramatis personæ" in lower_line or "dramatis personae" in lower_line):
+            break
+
+        if collecting and lower_line.startswith(word):
+            count += 1
+
+    return count
+
+
 
 if __name__ == "__main__":
     main()
