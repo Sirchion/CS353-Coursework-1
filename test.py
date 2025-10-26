@@ -36,8 +36,9 @@ def main():
 
         elif choice == "2":
             option_2()
+
         elif choice == "3":
-            print("Outputting the summary report to a text file...")
+            option_3()
         elif choice == "4":
             print("Viewing details of drama act...")
         elif choice == "5":
@@ -100,6 +101,46 @@ def option_2():
     print("\nPress Enter to go back to main menu.")
     input()
 
+def option_3():
+    global drama_file_path, drama_info, character_dict
+
+    character_dict.clear()
+
+    lines = []
+
+    if not drama_info:
+        print("No drama has been imported yet. Please import a file first.")
+        return
+
+    lines.append("Report of " + str(drama_file_path))
+
+    text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
+    num_acts = report_of_drama.scene_act_counter(text, "act")
+    lines.append("\nNumber of acts: " + str(num_acts))
+
+    num_scenes = report_of_drama.scene_act_counter(text, "scene")
+    lines.append("\nNumber of scenes: " + str(num_scenes))
+
+    report_of_drama.character_names(text, character_dict)
+    lines.append("\nCharacter names:")
+    name_counter = 1
+    for name, info in character_dict.items():
+        lines.append(str(name_counter) + ". " + info["full_title"])
+        name_counter += 1
+
+    top_20 = report_of_drama.top_spoken_words(text)
+    lines.append("\nTop 20 words:")
+    word_counter = 1
+    for word, count in top_20:
+        lines.append(str(word_counter) + ". " + word + ": " + str(count))
+        word_counter += 1
+
+    with open("summary_drama.txt", "w") as drama_summary:
+        drama_summary.write("\n".join(lines))
+
+    print("\nFile successfully created")
+    print("\nPress Enter to go back to main menu.")
+    input()
 
 if __name__ == "__main__":
     main()
