@@ -1,10 +1,14 @@
-import import_file
 import sys
 import re
+
+
+import import_file
+import report_of_drama
 
 # Global variables
 drama_file_path = ""
 drama_info = ""
+character_dict = {}
 
 def menu_options():
     print("\nSelect an option:")
@@ -62,42 +66,39 @@ def option_1():
 
 
 def option_2():
-    global drama_file_path, drama_info
+    global drama_file_path, drama_info, character_dict
+
+    character_dict.cl     ear()
 
     if not drama_info:
         print("No drama has been imported yet. Please import a file first.")
         return
 
+    print("\nPrinting summary report...")
+
     text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
-    num_acts = scene_act_counter(text, "act")
+    num_acts = report_of_drama.scene_act_counter(text, "act")
     print("Number of acts: " + str(num_acts))
 
-    num_scenes = scene_act_counter(text, "scene")
+    num_scenes = report_of_drama.scene_act_counter(text, "scene")
     print("Number of scenes: " + str(num_scenes))
 
+    report_of_drama.character_names(text, character_dict)
+    print("\nCharacter names:")
+    name_counter = 1
+    for name, info in character_dict.items():
+        print(str(name_counter) + ". " + info["full_title"])
+        name_counter += 1
 
+    top_20 = report_of_drama.top_spoken_words(text)
+    print("\nTop 20 words:")
+    word_counter = 1
+    for word, count in top_20:
+        print(str(word_counter) + ". " + word + ": " + str(count))
+        word_counter += 1
 
-def scene_act_counter(text, word):
-    lines = text if isinstance(text, list) else text.splitlines()
-
-    collecting = False
-    count = 0
-
-    for line in lines:
-        lower_line = line.lower().strip()
-
-        if not collecting and "contents" in lower_line:
-            collecting = True
-            continue
-
-        if collecting and ("dramatis personæ" in lower_line or "dramatis personae" in lower_line):
-            break
-
-        if collecting and lower_line.startswith(word):
-            count += 1
-
-    return count
-
+    print("\nPress Enter to go back to main menu.")
+    input()
 
 
 if __name__ == "__main__":
