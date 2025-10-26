@@ -3,7 +3,8 @@ import re
 
 
 import import_file
-import report_of_drama
+import play_info
+import act_info
 
 # Global variables
 drama_file_path = ""
@@ -39,8 +40,10 @@ def main():
 
         elif choice == "3":
             option_3()
+
         elif choice == "4":
-            print("Viewing details of drama act...")
+            option_4()
+
         elif choice == "5":
             print("Searching inside a drama scene...")
         elif choice == "6":
@@ -78,20 +81,20 @@ def option_2():
     print("\nPrinting summary report...")
 
     text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
-    num_acts = report_of_drama.scene_act_counter(text, "act")
+    num_acts = play_info.scene_act_counter(text, "act")
     print("Number of acts: " + str(num_acts))
 
-    num_scenes = report_of_drama.scene_act_counter(text, "scene")
+    num_scenes = play_info.scene_act_counter(text, "scene")
     print("Number of scenes: " + str(num_scenes))
 
-    report_of_drama.character_names(text, character_dict)
+    play_info.character_names(text, character_dict)
     print("\nCharacter names:")
     name_counter = 1
     for name, info in character_dict.items():
         print(str(name_counter) + ". " + info["full_title"])
         name_counter += 1
 
-    top_20 = report_of_drama.top_spoken_words(text)
+    top_20 = play_info.top_spoken_words(text)
     print("\nTop 20 words:")
     word_counter = 1
     for word, count in top_20:
@@ -115,20 +118,20 @@ def option_3():
     lines.append("Report of " + str(drama_file_path))
 
     text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
-    num_acts = report_of_drama.scene_act_counter(text, "act")
+    num_acts = play_info.scene_act_counter(text, "act")
     lines.append("\nNumber of acts: " + str(num_acts))
 
-    num_scenes = report_of_drama.scene_act_counter(text, "scene")
+    num_scenes = play_info.scene_act_counter(text, "scene")
     lines.append("\nNumber of scenes: " + str(num_scenes))
 
-    report_of_drama.character_names(text, character_dict)
+    play_info.character_names(text, character_dict)
     lines.append("\nCharacter names:")
     name_counter = 1
     for name, info in character_dict.items():
         lines.append(str(name_counter) + ". " + info["full_title"])
         name_counter += 1
 
-    top_20 = report_of_drama.top_spoken_words(text)
+    top_20 = play_info.top_spoken_words(text)
     lines.append("\nTop 20 words:")
     word_counter = 1
     for word, count in top_20:
@@ -141,6 +144,19 @@ def option_3():
     print("\nFile successfully created")
     print("\nPress Enter to go back to main menu.")
     input()
+
+def option_4():
+    global drama_file_path, drama_info, character_dict
+
+    print("\n Summary report of act")
+
+    act_number = input("\nEnter the act number: ")
+
+    num_words = act_info.number_of_words(drama_info, act_number)
+    print("Number of words: " + str(num_words))
+
+    num_utterances = act_info.number_utterances(drama_info, act_number)
+    print("Number of utterances: " + str(num_utterances))
 
 if __name__ == "__main__":
     main()

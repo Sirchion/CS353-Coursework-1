@@ -2,6 +2,7 @@ import re
 from collections import Counter
 
 
+
 def scene_act_counter(text, word):
     lines = text if isinstance(text, list) else text.splitlines()
 
