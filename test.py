@@ -68,7 +68,7 @@ def option_1():
 def option_2():
     global drama_file_path, drama_info, character_dict
 
-    character_dict.cl     ear()
+    character_dict.clear()
 
     if not drama_info:
         print("No drama has been imported yet. Please import a file first.")
