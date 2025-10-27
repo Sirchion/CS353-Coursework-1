@@ -1,10 +1,9 @@
 import sys
-import re
-
 
 import import_file
 import play_info
 import act_info
+import scene_info
 
 # Global variables
 drama_file_path = ""
@@ -45,7 +44,7 @@ def main():
             option_4()
 
         elif choice == "5":
-            print("Searching inside a drama scene...")
+            option_5()
         elif choice == "6":
             print("\nThank you, the program will now exit.")
             sys.exit()
@@ -148,15 +147,116 @@ def option_3():
 def option_4():
     global drama_file_path, drama_info, character_dict
 
-    print("\n Summary report of act")
+    if not drama_info:
+        print("No drama has been imported yet. Please import a file first.")
+        return
 
-    act_number = input("\nEnter the act number: ")
+    text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
+    print("\nSummary report of act")
+    num_acts = play_info.scene_act_counter(text, "act")
+
+    while True:
+        act_number = input("\nEnter the act number: ")
+
+        if act_number.isdigit():
+            act_number_int = int(act_number)
+            if act_number_int <= num_acts:
+                act_number = act_number_int
+                break
+            else:
+                print("\nInvalid act number. Please try again.")
+        else:
+            print("\nInvalid input. Please enter a number.")
+
 
     num_words = act_info.number_of_words(drama_info, act_number)
     print("Number of words: " + str(num_words))
 
     num_utterances = act_info.number_utterances(drama_info, act_number)
     print("Number of utterances: " + str(num_utterances))
+
+    character_most_spoken = act_info.character_spoke_count(text, act_number)
+    print("\nCharacter who speaks the most: " + str(character_most_spoken))
+
+    character_least_spoken = act_info.character_spoke_least(drama_info, act_number)
+    print("Character who speaks the least: " + str(character_least_spoken))
+
+    store_name_of_scenes = act_info.name_of_scenes(text, act_number)
+    scene_counter = 1
+    print("\nNumber of scenes: ")
+    for scene in store_name_of_scenes:
+        print(str(scene_counter) + ": " + scene)
+        scene_counter += 1
+
+    print("\nPress Enter to go back to main menu.")
+    input()
+
+def option_5():
+    global drama_file_path, drama_info, character_dict
+
+    if not drama_info:
+        print("No drama has been imported yet. Please import a file first.")
+        return
+
+    text = "\n".join(drama_info) if isinstance(drama_info, list) else str(drama_info)
+    print("\nSummary report of scene")
+
+
+    num_acts = play_info.scene_act_counter(text, "act")
+
+    while True:
+        act_number = input("\nEnter the act number: ")
+
+        if act_number.isdigit():
+            act_number_int = int(act_number)
+            if act_number_int <= num_acts:
+                act_number = act_number_int
+                break
+            else:
+                print("\nInvalid act number. Please try again.")
+        else:
+            print("\nInvalid input. Please enter a number.")
+
+    num_scenes = act_info.name_of_scenes(text, act_number)
+
+    while True:
+        scene_number = input("\nEnter the scene number: ")
+
+        if scene_number.isdigit():
+            scene_number_int = int(scene_number)
+            if scene_number_int <= len(num_scenes):
+                scene_number = scene_number_int
+                break
+            else:
+                print("\nInvalid scene number. Please try again.")
+        else:
+            print("\nInvalid input. Please enter a number.")
+
+    while True:
+        search_phrase = input("\nEnter phrase: ").strip()
+        if search_phrase:
+            break
+        else:
+            print("Invalid input. Please enter a phrase.")
+
+    count_phrase = scene_info.phrase_counter(text, act_number, scene_number, search_phrase)
+    print("Found: " + str(count_phrase)  + " occurrences:")
+    phrase = scene_info.phrase_list(text, act_number, scene_number, search_phrase)
+    phrase_counter = 1
+    for name in phrase:
+        print(str(phrase_counter) + ". " + name)
+        phrase_counter += 1
+
+    while True:
+        character_name = input("\nEnter character name: ").strip()
+        if character_name:
+            break
+        else:
+            print("Invalid input. Please enter a phrase.")
+
+
+    print("\nPress Enter to go back to main menu.")
+    input()
 
 if __name__ == "__main__":
     main()
